@@ -1,7 +1,4 @@
 import pygame
-from pygame.locals import *
-import random
-
 
 SCREEN_WIDTH, SCREEN_HEIGHT = 1080, 720
 FPS = 60
@@ -18,9 +15,13 @@ BOARD_BORDER_COLOR = BOARD_COLOR
 
 BOARD_CARPET_COLOR = (40, 200, 90)
 
-CELL_SIZE = ((BOARD_AREA - BOARD_BORDER_AREA)**(1/2)) / 8
-CELL_GAP = 4
+CELL_COUNT = 8**2
+CELL_SIZE = ((BOARD_AREA - BOARD_BORDER_AREA)**(1/2)) / CELL_COUNT**(1/2)
+CELL_GAP = CELL_SIZE / 20
 
+class Game:
+    def __init__(self):
+        self.cells = (0) * CELL_COUNT
 
 class Board:
     def __init__(self, screen):
@@ -62,21 +63,42 @@ class Board:
             pygame.draw.rect(
                 self.screen,
                 BOARD_CARPET_COLOR, (
-                    BOARD_BORDER_WIDTH + id % 8 * CELL_SIZE + CELL_GAP / 2,
-                    BOARD_BORDER_WIDTH + id // 8 * CELL_SIZE + CELL_GAP / 2,
+                    BOARD_BORDER_WIDTH + id % CELL_COUNT**(1/2) * CELL_SIZE + CELL_GAP / 2,
+                    BOARD_BORDER_WIDTH + id // CELL_COUNT**(1/2) * CELL_SIZE + CELL_GAP / 2,
                     CELL_SIZE - CELL_GAP,
                     CELL_SIZE - CELL_GAP
                 )
             )
-        ), range(64)))
+        ), range(CELL_COUNT)))
+
+class Racket:
+    def __init__(self, screen, coordinates):
+        self.screen = screen
+        self.speed = 4
+        
+        self.x, self.y = coordinates
+
+    def update(self):
+        self.rect = pygame.draw.circle(self.screen, (255, 255, 255), (self.x, self.y), 20)
+
+    def up(self):
+        self.y -= self.speed
+ 
+    def down(self):
+        self.y += self.speed
+
 
 pygame.init()
+
+pygame.font.init()
+font = pygame.freetype.SysFont(pygame.font.get_default_font(), 30)
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption('Othello')
 clock = pygame.time.Clock() 
 
 board = Board(screen)
+squash = Racket(screen, (50, 50))
 
 while True:
     screen.fill(SCREEN_COLOR)
