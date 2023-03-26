@@ -71,22 +71,6 @@ class Board:
             )
         ), range(CELL_COUNT)))
 
-class Racket:
-    def __init__(self, screen, coordinates):
-        self.screen = screen
-        self.speed = 4
-        
-        self.x, self.y = coordinates
-
-    def update(self):
-        self.rect = pygame.draw.circle(self.screen, (255, 255, 255), (self.x, self.y), 20)
-
-    def up(self):
-        self.y -= self.speed
- 
-    def down(self):
-        self.y += self.speed
-
 
 pygame.init()
 
